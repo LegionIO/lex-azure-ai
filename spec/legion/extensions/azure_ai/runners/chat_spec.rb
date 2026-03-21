@@ -67,5 +67,40 @@ RSpec.describe Legion::Extensions::AzureAi::Runners::Chat do
       )
       expect(result[:result]).to eq(response_body)
     end
+
+    it 'omits max_tokens from body when not provided' do
+      messages = [{ role: 'user', content: 'Hi' }]
+      allow(conn).to receive(:post) do |_path, body|
+        expect(body).not_to have_key(:max_tokens)
+        expect(body).not_to have_key(:temperature)
+        response
+      end
+
+      test_class.create(deployment: deployment, messages: messages, api_key: api_key, endpoint: endpoint)
+    end
+
+    it 'encodes the deployment name in the URL path' do
+      messages = [{ role: 'user', content: 'Hello' }]
+      expected_path = '/openai/deployments/my-custom-model/chat/completions?api-version=2024-10-21'
+      allow(conn).to receive(:post)
+        .with(expected_path, anything)
+        .and_return(response)
+
+      test_class.create(
+        deployment: 'my-custom-model',
+        messages:   messages,
+        api_key:    api_key,
+        endpoint:   endpoint
+      )
+    end
+
+    it 'returns a hash with a :result key' do
+      messages = [{ role: 'user', content: 'Hi' }]
+      allow(conn).to receive(:post).and_return(response)
+
+      result = test_class.create(deployment: deployment, messages: messages, api_key: api_key, endpoint: endpoint)
+      expect(result).to be_a(Hash)
+      expect(result).to have_key(:result)
+    end
   end
 end

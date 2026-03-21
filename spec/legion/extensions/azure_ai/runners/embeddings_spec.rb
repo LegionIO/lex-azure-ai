@@ -44,5 +44,34 @@ RSpec.describe Legion::Extensions::AzureAi::Runners::Embeddings do
       )
       expect(result[:result]).to eq(body)
     end
+
+    it 'accepts an array of strings as input' do
+      body = { 'data' => [{ 'embedding' => [0.1, 0.2] }, { 'embedding' => [0.3, 0.4] }] }
+      allow(conn).to receive(:post)
+        .with(anything, hash_including(input: %w[Hello World]))
+        .and_return(instance_double(Faraday::Response, body: body))
+
+      result = test_class.create(deployment: deployment, input: %w[Hello World], api_key: api_key, endpoint: endpoint)
+      expect(result[:result]['data'].length).to eq(2)
+    end
+
+    it 'returns a hash with a :result key' do
+      body = { 'data' => [] }
+      allow(conn).to receive(:post).and_return(instance_double(Faraday::Response, body: body))
+
+      result = test_class.create(deployment: deployment, input: 'text', api_key: api_key, endpoint: endpoint)
+      expect(result).to be_a(Hash)
+      expect(result).to have_key(:result)
+    end
+
+    it 'encodes the deployment name in the path' do
+      body = { 'data' => [] }
+      expected_path = '/openai/deployments/ada-002/embeddings?api-version=2024-10-21'
+      allow(conn).to receive(:post)
+        .with(expected_path, anything)
+        .and_return(instance_double(Faraday::Response, body: body))
+
+      test_class.create(deployment: 'ada-002', input: 'text', api_key: api_key, endpoint: endpoint)
+    end
   end
 end

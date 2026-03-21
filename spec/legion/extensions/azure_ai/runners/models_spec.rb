@@ -37,5 +37,22 @@ RSpec.describe Legion::Extensions::AzureAi::Runners::Models do
       result = test_class.list(api_key: api_key, endpoint: endpoint, api_version: '2024-05-01')
       expect(result[:models]).to eq(body)
     end
+
+    it 'returns a hash with a :models key' do
+      body = { 'data' => [] }
+      allow(conn).to receive(:get).and_return(instance_double(Faraday::Response, body: body))
+
+      result = test_class.list(api_key: api_key, endpoint: endpoint)
+      expect(result).to be_a(Hash)
+      expect(result).to have_key(:models)
+    end
+
+    it 'returns model ids from the response' do
+      body = { 'data' => [{ 'id' => 'gpt-4o' }] }
+      allow(conn).to receive(:get).and_return(instance_double(Faraday::Response, body: body))
+
+      result = test_class.list(api_key: api_key, endpoint: endpoint)
+      expect(result[:models]['data'].first['id']).to eq('gpt-4o')
+    end
   end
 end
