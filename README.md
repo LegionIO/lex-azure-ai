@@ -2,6 +2,10 @@
 
 Legion Extension that connects LegionIO to Azure AI Services (Azure OpenAI).
 
+## Purpose
+
+Wraps the Azure OpenAI REST API as named runners consumable by any LegionIO task chain. Provides chat completions, embeddings, and model listing. Use this extension when you need direct access to the Azure OpenAI API surface within the LEX runner/actor lifecycle. For simple chat/embed workflows, consider `legion-llm` instead.
+
 ## Installation
 
 Add to your Gemfile:
@@ -51,6 +55,20 @@ Legion::Extensions::AzureAi::Runners::Models.list(
   endpoint: 'my-resource'
 )
 ```
+
+## API Coverage
+
+| Runner | Methods |
+|--------|---------|
+| `Chat` | `create` |
+| `Embeddings` | `create` |
+| `Models` | `list` |
+
+## Related
+
+- `lex-foundry` — Azure AI Foundry management API (model catalog, deployments, connections)
+- `legion-llm` — High-level LLM interface across all providers including Azure OpenAI
+- `extensions-ai/CLAUDE.md` — Architecture patterns shared across all AI extensions
 
 ## License
 
