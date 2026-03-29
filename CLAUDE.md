@@ -10,7 +10,7 @@ Legion Extension that connects LegionIO to Azure AI Services (Azure OpenAI). Pro
 
 **GitHub**: https://github.com/LegionIO/lex-azure-ai
 **License**: MIT
-**Version**: 0.1.0
+**Version**: 0.1.2
 **Specs**: 22 examples
 
 ## Architecture
