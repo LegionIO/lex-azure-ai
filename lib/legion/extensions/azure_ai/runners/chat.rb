@@ -17,7 +17,15 @@ module Legion
 
             path = "/openai/deployments/#{deployment}/chat/completions?api-version=#{api_version}"
             response = client(api_key: api_key, endpoint: endpoint, api_version: api_version).post(path, body)
-            { result: response.body }
+            {
+              result: response.body,
+              usage:  {
+                input_tokens:       response.body.dig('usage', 'prompt_tokens') || 0,
+                output_tokens:      response.body.dig('usage', 'completion_tokens') || 0,
+                cache_read_tokens:  response.body.dig('usage', 'prompt_tokens_details', 'cached_tokens') || 0,
+                cache_write_tokens: 0
+              }
+            }
           end
 
           include Legion::Extensions::Helpers::Lex if Legion::Extensions.const_defined?(:Helpers, false) &&
