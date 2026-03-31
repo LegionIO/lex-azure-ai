@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-03-31
+
+### Added
+- Standardized `usage:` key in Chat and Embeddings runner return hashes, exposing `input_tokens`, `output_tokens`, `cache_read_tokens`, and `cache_write_tokens` for consumption by legion-llm CostEstimator and metering
+
 ## [0.1.3] - 2026-03-30
 
 ### Changed

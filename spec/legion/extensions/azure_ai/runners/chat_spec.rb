@@ -19,7 +19,16 @@ RSpec.describe Legion::Extensions::AzureAi::Runners::Chat do
 
   describe '#create' do
     let(:response_body) do
-      { 'id' => 'chatcmpl-123', 'choices' => [{ 'message' => { 'content' => 'Hello!' } }] }
+      {
+        'id'      => 'chatcmpl-123',
+        'choices' => [{ 'message' => { 'content' => 'Hello!' } }],
+        'usage'   => {
+          'prompt_tokens'         => 10,
+          'completion_tokens'     => 20,
+          'total_tokens'          => 30,
+          'prompt_tokens_details' => { 'cached_tokens' => 5 }
+        }
+      }
     end
 
     it 'creates a chat completion' do
@@ -101,6 +110,45 @@ RSpec.describe Legion::Extensions::AzureAi::Runners::Chat do
       result = test_class.create(deployment: deployment, messages: messages, api_key: api_key, endpoint: endpoint)
       expect(result).to be_a(Hash)
       expect(result).to have_key(:result)
+    end
+
+    it 'returns a :usage key with token counts' do
+      messages = [{ role: 'user', content: 'Hi' }]
+      allow(conn).to receive(:post).and_return(response)
+
+      result = test_class.create(deployment: deployment, messages: messages, api_key: api_key, endpoint: endpoint)
+      expect(result).to have_key(:usage)
+      expect(result[:usage][:input_tokens]).to eq(10)
+      expect(result[:usage][:output_tokens]).to eq(20)
+      expect(result[:usage][:cache_read_tokens]).to eq(5)
+      expect(result[:usage][:cache_write_tokens]).to eq(0)
+    end
+
+    it 'returns zero usage when usage is absent from response' do
+      messages    = [{ role: 'user', content: 'Hi' }]
+      sparse_body = { 'id' => 'chatcmpl-000', 'choices' => [] }
+      allow(conn).to receive(:post)
+        .and_return(instance_double(Faraday::Response, body: sparse_body))
+
+      result = test_class.create(deployment: deployment, messages: messages, api_key: api_key, endpoint: endpoint)
+      expect(result[:usage]).to eq(
+        input_tokens:       0,
+        output_tokens:      0,
+        cache_read_tokens:  0,
+        cache_write_tokens: 0
+      )
+    end
+
+    it 'returns zero cache_read_tokens when prompt_tokens_details is absent' do
+      messages  = [{ role: 'user', content: 'Hi' }]
+      body      = { 'usage' => { 'prompt_tokens' => 8, 'completion_tokens' => 4 } }
+      allow(conn).to receive(:post)
+        .and_return(instance_double(Faraday::Response, body: body))
+
+      result = test_class.create(deployment: deployment, messages: messages, api_key: api_key, endpoint: endpoint)
+      expect(result[:usage][:input_tokens]).to eq(8)
+      expect(result[:usage][:output_tokens]).to eq(4)
+      expect(result[:usage][:cache_read_tokens]).to eq(0)
     end
   end
 end

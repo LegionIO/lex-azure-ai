@@ -64,6 +64,38 @@ RSpec.describe Legion::Extensions::AzureAi::Runners::Embeddings do
       expect(result).to have_key(:result)
     end
 
+    it 'returns a :usage key with token counts' do
+      body = {
+        'data'  => [{ 'embedding' => [0.1, 0.2] }],
+        'usage' => {
+          'prompt_tokens'         => 6,
+          'completion_tokens'     => 0,
+          'prompt_tokens_details' => { 'cached_tokens' => 3 }
+        }
+      }
+      allow(conn).to receive(:post).and_return(instance_double(Faraday::Response, body: body))
+
+      result = test_class.create(deployment: deployment, input: 'text', api_key: api_key, endpoint: endpoint)
+      expect(result).to have_key(:usage)
+      expect(result[:usage][:input_tokens]).to eq(6)
+      expect(result[:usage][:output_tokens]).to eq(0)
+      expect(result[:usage][:cache_read_tokens]).to eq(3)
+      expect(result[:usage][:cache_write_tokens]).to eq(0)
+    end
+
+    it 'returns zero usage when usage is absent from response' do
+      body = { 'data' => [] }
+      allow(conn).to receive(:post).and_return(instance_double(Faraday::Response, body: body))
+
+      result = test_class.create(deployment: deployment, input: 'text', api_key: api_key, endpoint: endpoint)
+      expect(result[:usage]).to eq(
+        input_tokens:       0,
+        output_tokens:      0,
+        cache_read_tokens:  0,
+        cache_write_tokens: 0
+      )
+    end
+
     it 'encodes the deployment name in the path' do
       body = { 'data' => [] }
       expected_path = '/openai/deployments/ada-002/embeddings?api-version=2024-10-21'
