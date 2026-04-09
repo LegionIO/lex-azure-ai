@@ -64,6 +64,10 @@ Legion::Extensions::AzureAi::Runners::Models.list(
 | `Embeddings` | `create` |
 | `Models` | `list` |
 
+## Version
+
+0.1.5
+
 ## Related
 
 - `lex-foundry` — Azure AI Foundry management API (model catalog, deployments, connections)
