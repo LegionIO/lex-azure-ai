@@ -10,8 +10,8 @@ Legion Extension that connects LegionIO to Azure AI Services (Azure OpenAI). Pro
 
 **GitHub**: https://github.com/LegionIO/lex-azure-ai
 **License**: MIT
-**Version**: 0.1.2
-**Specs**: 22 examples
+**Version**: 0.1.5
+**Specs**: 35 examples (4 spec files)
 
 ## Architecture
 
@@ -44,15 +44,17 @@ Legion::Extensions::AzureAi
 |-----|---------|
 | `faraday` >= 2.0 | HTTP client for Azure OpenAI API |
 | `multi_json` | JSON parser abstraction |
+| `legion-cache`, `legion-crypt`, `legion-data`, `legion-json`, `legion-logging`, `legion-settings`, `legion-transport` | LegionIO core |
 
 ## Testing
 
 ```bash
 bundle install
-bundle exec rspec        # 22 examples
+bundle exec rspec        # 35 examples
 bundle exec rubocop
 ```
 
 ---
 
 **Maintained By**: Matthew Iverson (@Esity)
+**Last Updated**: 2026-04-06
