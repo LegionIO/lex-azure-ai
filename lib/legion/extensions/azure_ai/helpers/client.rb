@@ -18,6 +18,15 @@ module Legion
               conn.headers['Content-Type'] = 'application/json'
             end
           end
+
+          def content_safety_client(api_key:, endpoint:, **)
+            Faraday.new(url: "https://#{endpoint}.cognitiveservices.azure.com") do |conn|
+              conn.request :json
+              conn.response :json, content_type: /\bjson$/
+              conn.headers['Ocp-Apim-Subscription-Key'] = api_key
+              conn.headers['Content-Type'] = 'application/json'
+            end
+          end
         end
       end
     end

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6] - 2026-04-17
+
+### Added
+- Content Safety runner with `check_text` method for Azure AI Content Safety `text:analyze` API (#4)
+- `content_safety_client` factory method in `Helpers::Client` for Cognitive Services endpoint
+- Configurable severity threshold (default 2, range 0-6) with normalized blocked/reasons response
+
 ## [0.1.5] - 2026-04-06
 
 ### Added

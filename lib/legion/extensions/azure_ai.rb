@@ -5,6 +5,7 @@ require 'legion/extensions/azure_ai/helpers/client'
 require 'legion/extensions/azure_ai/runners/chat'
 require 'legion/extensions/azure_ai/runners/embeddings'
 require 'legion/extensions/azure_ai/runners/models'
+require 'legion/extensions/azure_ai/runners/content_safety'
 require 'legion/extensions/azure_ai/client'
 require 'legion/extensions/azure_ai/identity'
 
