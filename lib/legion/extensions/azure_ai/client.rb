@@ -4,6 +4,7 @@ require 'legion/extensions/azure_ai/helpers/client'
 require 'legion/extensions/azure_ai/runners/chat'
 require 'legion/extensions/azure_ai/runners/embeddings'
 require 'legion/extensions/azure_ai/runners/models'
+require 'legion/extensions/azure_ai/runners/content_safety'
 
 module Legion
   module Extensions
@@ -12,6 +13,7 @@ module Legion
         include Legion::Extensions::AzureAi::Runners::Chat
         include Legion::Extensions::AzureAi::Runners::Embeddings
         include Legion::Extensions::AzureAi::Runners::Models
+        include Legion::Extensions::AzureAi::Runners::ContentSafety
 
         attr_reader :config
 
